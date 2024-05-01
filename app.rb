@@ -35,3 +35,13 @@ get("/square_root/results") do
   @the_sqrt_result  = @the_number ** 0.5
   erb(:square_root_results)
 end
+
+get("/payment/new") do
+  erb(:new_payment_calc)
+end
+
+get("/payment/results") do
+@apr = params.fetch("user_apr").to_f.to_s+ "%"
+@num_years = params.fetch("user_years").to_i
+@principal = params.fetch("user_pv").to
+end
