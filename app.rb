@@ -41,7 +41,33 @@ get("/payment/new") do
 end
 
 get("/payment/results") do
-@apr = params.fetch("user_apr").to_f.to_s+ "%"
-@num_years = params.fetch("user_years").to_i
-@principal = params.fetch("user_pv").to
+  @apr = params.fetch("user_apr").to_f.round(3)
+  @apr_display = "#{@apr}" + "%"
+  @apr_calc = params.fetch("user_apr").to_f 
+  @num_years = params.fetch("user_years").to_i
+  @principal_display = "$" + params.fetch("user_pv").to_s  # String for display with '$'
+  @principal_for_calculation = params.fetch("user_pv").to_f  # Float for calculations
+
+
+  monthly_interest_rate = @apr_calc / (12 * 100) 
+  total_payments = @num_years * 12  
+  @payment = (@principal_for_calculation  * monthly_interest_rate * (1 + monthly_interest_rate) ** total_payments) / ((1 + monthly_interest_rate) ** total_payments - 1)
+
+  def format_currency(amount)
+    "$#{'%.2f' % amount}"  # Format to two decimal places and prepend '$'
+  end
+  @formatted_payment = format_currency(@payment)  
+  erb(:payment_result)
+end
+
+
+get("/random/new") do
+  erb(:new_random)
+end
+
+get("/random/results") do
+  @min_value = params.fetch("user_min").to_f
+  @max_value = params.fetch("user_max").to_f
+  @random = rand(@min_value..@max_value).round(15)
+  erb(:random_results)
 end
